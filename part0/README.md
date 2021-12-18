@@ -3,6 +3,11 @@ title Exercises 0.4.-0.6
 # 0.4: NEW NOTE
 
 browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new-note
+
+note over browser:
+browser sends form data to server as JSON string with post request
+end note
+
 server->browser: 302 Found -> redirect /notes
 browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
 server->browser: HTML-code
