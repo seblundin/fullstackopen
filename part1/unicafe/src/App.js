@@ -59,7 +59,7 @@ const Statistics = ({good, neutral, bad}) => {
   return (<p>No feedback given</p>);
 }
 
-const StatisticLine = ({text, value}) => {return (<p>{text} {value}</p>)}
+const StatisticLine = ({text, value}) => <p>{text} {value}</p>
 
 const Button = ({text, handleClick}) => {
   return <button onClick={handleClick}>{text}</button>
