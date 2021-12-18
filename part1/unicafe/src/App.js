@@ -21,16 +21,45 @@ function App() {
   );
 }
 
-const Statistics = props => {
-  return (
-    <>
-      <h1>Statistics</h1>
-      <p>good {props.good}</p>
-      <p>neutral {props.neutral}</p>
-      <p>bad {props.bad}</p>
-    </>
-  );
+const Statistics = ({good, neutral, bad}) => {
+  if (good || neutral || bad) {
+    const all = good+neutral+bad
+    return (
+      <>
+        <table>
+          <thead>
+            <tr>
+              <th>Statistics</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><StatisticLine text="good" value={good}/></td>
+            </tr>
+            <tr>
+              <td><StatisticLine text="neutral" value={neutral}/></td>
+            </tr>
+            <tr>
+              <td><StatisticLine text="bad" value={bad}/></td>
+            </tr>
+            <tr>
+              <td><StatisticLine text="all" value={all}/></td>
+            </tr>
+            <tr>
+              <td><StatisticLine text="average" value={(good-bad)/all}/></td>
+            </tr>
+            <tr>
+              <td><StatisticLine text="positive" value={good/all*100 + "%"}/></td>
+            </tr>
+          </tbody>
+        </table>
+      </>
+    );
+  }
+  return (<p>No feedback given</p>);
 }
+
+const StatisticLine = ({text, value}) => {return (<p>{text} {value}</p>)}
 
 const Button = ({text, handleClick}) => {
   return <button onClick={handleClick}>{text}</button>
