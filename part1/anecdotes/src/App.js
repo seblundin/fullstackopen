@@ -29,9 +29,9 @@ function App() {
       <Button text="vote" handleClick={() => setVotecount(votes[selected] + 1)}/>
       <Button text="next anecdote" handleClick={() => setIndex()}/>
       <br></br>
+      
       <h1>Anecdote with most votes</h1>
       <h2>{anecdotes[votes.indexOf(Math.max(...votes))]}</h2>
-      <p></p>
     </div>
   )
 }
