@@ -4,9 +4,10 @@ import ResultView from './components/ResultView'
 import Searchbar from './components/Searchbar'
 
 function App() {
+  
   useEffect(() => {
     axios
-      .get('https://restcountries.com/v2/all')
+      .get('https://restcountries.com/v3.1/all')
       .then(response => setCountries(response.data))
   }, [])
 
@@ -16,11 +17,11 @@ function App() {
 
   const handleSearch = (event) => {
     setSearch(event.target.value)
-    setChoice(countries.filter(country => country.name.toLowerCase().indexOf(event.target.value.toLowerCase()) !== -1))
+    setChoice(countries.filter(country => country.name.common.toLowerCase().indexOf(event.target.value.toLowerCase()) !== -1))
   }
 
   const selectCountry = (name) => {
-    setChoice(choice.filter(country => country.name.toLowerCase() === name.toLowerCase()))
+    setChoice(choice.filter(country => country.name.common.toLowerCase() === name.toLowerCase()))
   }
 
   return (
