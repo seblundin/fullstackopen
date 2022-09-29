@@ -37,10 +37,11 @@ const App = () => {
       && window.confirm(`${newName} is already added to phonebook. Replace the old number with a new one?`)) {
       personService
         .updatePerson(persons.filter(person => person.name === newName)[0], newNumber)
-        .then(response => setPersons(persons.map(person => person.id === response.id ? response : person)))
-        .catch(_e => setNotification({message: `Information of ${newName} has already been removed from server`, isError: true}))
-      
-      setNotification({message: `${newName} updated succesfully`, isError: false})
+        .then(response => {
+          setPersons(persons.map(person => person.id === response.id ? response : person))
+          setNotification({message: `${newName} updated succesfully`, isError: false})
+        })
+        .catch(() => setNotification({message: `Information of ${newName} has already been removed from server`, isError: true}))
 
     } else if (!personExists && newName !== '') {
       const personObject = {
@@ -51,10 +52,11 @@ const App = () => {
 
       personService
         .createPerson(personObject)
-        .then(response => setPersons(persons.concat(response)))
-        .catch(e => console.error(e))
-      
-      setNotification({message: `${newName} added succesfully`, isError: false})
+        .then(response => {
+          setPersons(persons.concat(response))
+          setNotification({message: `${newName} added succesfully`, isError: false})
+        })
+        .catch(e => setNotification({message: e.response.data.error, isError: true}))
     }
 
     setNewName('')
@@ -70,10 +72,11 @@ const App = () => {
     if (toRemove !== undefined && window.confirm(`Delete ${toRemove.name}?`)) {
       personService
         .removePerson(id)
-        .then(_response => setPersons(persons.filter(person => person.id !== id)))
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+          setNotification({message: `${toRemove.name} deleted succesfully`, isError: false})
+        })
         .catch(e => console.log(e))
-      
-      setNotification({message: `${toRemove.name} deleted succesfully`, isError: false})
     }
   }
 
