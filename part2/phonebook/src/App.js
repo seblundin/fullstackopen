@@ -41,7 +41,7 @@ const App = () => {
           setPersons(persons.map(person => person.id === response.id ? response : person))
           setNotification({message: `${newName} updated succesfully`, isError: false})
         })
-        .catch(() => setNotification({message: `Information of ${newName} has already been removed from server`, isError: true}))
+        .catch(e => setNotification({message: `Updating of ${newName} failed ${e.response.data.error}`, isError: true}))
 
     } else if (!personExists && newName !== '') {
       const personObject = {
