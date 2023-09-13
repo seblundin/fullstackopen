@@ -1,37 +1,8 @@
 import useToggle from '../hooks/useToggle';
-import { updateBlog, deleteBlog } from '../services/blogs';
 import PropTypes from 'prop-types';
 
-const Blog = ({ user, blog, blogs, setBlogs }) => {
+const Blog = ({ blog, handleLike, handleDelete }) => {
   const [show, flip] = useToggle();
-
-  const handleLike = async () => {
-    const blogIndex = blogs.findIndex((otherBlog) => otherBlog.id === blog.id);
-
-    if (blogIndex === -1) {
-      return;
-    }
-
-    const updatedBlog = await updateBlog(
-      {
-        ...blogs[blogIndex],
-        likes: blogs[blogIndex].likes + 1,
-        user: blogs[blogIndex].user.id,
-      },
-      user.token
-    );
-
-    const updatedBlogList = [...blogs];
-    updatedBlogList[blogIndex] = updatedBlog;
-
-    setBlogs(updatedBlogList);
-  };
-
-  const handleDelete = async () => {
-    window.confirm(`Remove blog ${blog.title} by ${blog.author}`);
-    await deleteBlog(blog.id, user.token);
-    setBlogs(blogs.filter((someBlog) => someBlog.id !== blog.id));
-  };
 
   const listStyle = {
     display: show ? 'flex' : 'none',
@@ -52,14 +23,19 @@ const Blog = ({ user, blog, blogs, setBlogs }) => {
       <p>
         {blog.title} {blog.author}
       </p>
-      <button onClick={flip}>{show ? 'hide' : 'view'}</button>
-      <div style={listStyle}>
-        <p>{blog.url}</p>
-        <div>
-          likes {blog.likes} <button onClick={handleLike}>like</button>
+      <button data-testid='hide-button' onClick={flip}>
+        {show ? 'hide' : 'view'}
+      </button>
+      <div data-testid='additional-info' style={listStyle}>
+        <p data-testid='url'>{blog.url}</p>
+        <div data-testid='likes'>
+          likes {blog.likes}
+          <button data-testid='like-button' onClick={() => handleLike(blog)}>
+            like
+          </button>
         </div>
-        {blog.user && <p>{blog.user.name}</p>}
-        <button style={buttonStyle} onClick={handleDelete}>
+        {blog.user && <p data-testid='name'>{blog.user.name}</p>}
+        <button style={buttonStyle} onClick={() => handleDelete(blog)}>
           remove
         </button>
       </div>
@@ -68,10 +44,9 @@ const Blog = ({ user, blog, blogs, setBlogs }) => {
 };
 
 Blog.propTypes = {
-  user: PropTypes.object.isRequired,
   blog: PropTypes.object.isRequired,
-  blogs: PropTypes.array.isRequired,
-  setBlogs: PropTypes.func.isRequired,
+  handleLike: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
 };
 
 export default Blog;

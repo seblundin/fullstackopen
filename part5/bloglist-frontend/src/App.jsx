@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Blog from './components/Blog';
-import { getAll } from './services/blogs';
+import { getAll, updateBlog, createBlog, deleteBlog } from './services/blogs';
 import Login from './components/Login';
 import login from './services/login';
 import BlogForm from './components/BlogForm';
@@ -36,6 +36,48 @@ const App = () => {
     setFeedbackMessage(
       `A new blog ${blogData.title} by ${blogData.author} has been added`
     );
+  };
+
+  const handleLike = async (blog) => {
+    const blogIndex = blogs.findIndex((otherBlog) => otherBlog.id === blog.id);
+
+    if (blogIndex === -1) {
+      return;
+    }
+
+    const updatedBlog = await updateBlog(
+      {
+        ...blogs[blogIndex],
+        likes: blogs[blogIndex].likes + 1,
+        user: blogs[blogIndex].user.id,
+      },
+      user.token
+    );
+
+    const updatedBlogList = [...blogs];
+    updatedBlogList[blogIndex] = updatedBlog;
+
+    updateBlogs(updatedBlogList);
+  };
+
+  const handleDelete = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      await deleteBlog(blog.id, user.token);
+      updateBlogs(blogs.filter((someBlog) => someBlog.id !== blog.id));
+    }
+  };
+
+  const submitBlog = async (blog) => {
+    const { title, author, url } = blog;
+    if (title && author && url) {
+      const newBlog = await createBlog(blog, user.token);
+      updateBlogs([...blogs, newBlog]);
+      giveFeedback(newBlog);
+      return true;
+    } else {
+      setErrorMessage('No fields should be left empty in the blog form');
+      return false;
+    }
   };
 
   const updateBlogs = (blogs) => {
@@ -91,19 +133,15 @@ const App = () => {
           {feedbackMessage && <p style={feedbackStyle}>{feedbackMessage}</p>}
           {user.name} logged in<button onClick={logout}>logout</button>
           <br></br>
-          <BlogForm
-            user={user}
-            currentBlogs={blogs}
-            setBlogs={updateBlogs}
-            giveFeedback={giveFeedback}
-          />
+          {errorMessage && <p style={warningStyle}>{errorMessage}</p>}
+          <BlogForm submitBlog={submitBlog} />
           {blogs.map((blog) => (
             <Blog
               key={blog.id}
-              user={user}
               blog={blog}
-              blogs={blogs}
               setBlogs={updateBlogs}
+              handleLike={handleLike}
+              handleDelete={handleDelete}
             />
           ))}
         </>

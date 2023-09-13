@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import useToggle from '../hooks/useToggle';
-import { createBlog } from '../services/blogs';
 
-const BlogForm = ({ user, currentBlogs, setBlogs, giveFeedback }) => {
+const BlogForm = ({ submitBlog }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
@@ -28,15 +27,15 @@ const BlogForm = ({ user, currentBlogs, setBlogs, giveFeedback }) => {
         style={style}
         onSubmit={async (e) => {
           e.preventDefault();
-          const newBlog = await createBlog({ title, author, url }, user.token);
-          setBlogs([...currentBlogs, newBlog]);
-          giveFeedback(newBlog);
-          reset();
+          if (await submitBlog({ title, author, url })) {
+            reset();
+          }
         }}
       >
         <h2>create new</h2>
         title:
         <input
+          data-testid='title-input'
           type='text'
           value={title}
           name='Title'
@@ -44,6 +43,7 @@ const BlogForm = ({ user, currentBlogs, setBlogs, giveFeedback }) => {
         />
         author:
         <input
+          data-testid='author-input'
           type='text'
           value={author}
           name='Author'
@@ -51,12 +51,15 @@ const BlogForm = ({ user, currentBlogs, setBlogs, giveFeedback }) => {
         />
         url:
         <input
+          data-testid='url-input'
           type='text'
           value={url}
           name='Url'
           onChange={({ target }) => setUrl(target.value)}
         />
-        <button type='submit'>create</button>
+        <button data-testid='submit-button' type='submit'>
+          create
+        </button>
       </form>
       <button onClick={toggle}>{show ? 'cancel' : 'new blog'}</button>
     </>
