@@ -1,19 +1,27 @@
 import axios from 'axios';
 
-let token;
+const url = import.meta.env.VITE_BACKEND;
+
+const config = (token) => ({ headers: { Authorization: `Bearer ${token}` } });
 
 const getAll = async () => {
-  const response = await axios.get(import.meta.env.VITE_BACKEND);
+  const response = await axios.get(url);
   return response.data;
 };
 
-const createBlog = async (blog) => {
-  const response = await axios.post(import.meta.env.VITE_BACKEND, blog, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+const createBlog = async (blog, token) => {
+  const response = await axios.post(url, blog, config(token));
   return response.data;
 };
 
-const setToken = (newToken) => (token = newToken);
+const updateBlog = async (blog, token) => {
+  const response = await axios.put(`${url}/${blog.id}`, blog, config(token));
+  return response.data;
+};
 
-export { getAll, createBlog, setToken };
+const deleteBlog = async (id, token) => {
+  const response = await axios.delete(`${url}/${id}`, config(token));
+  return response.data;
+};
+
+export { getAll, createBlog, updateBlog, deleteBlog };

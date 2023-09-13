@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Blog from './components/Blog';
-import { getAll, createBlog, setToken } from './services/blogs';
+import { getAll } from './services/blogs';
 import Login from './components/Login';
 import login from './services/login';
 import BlogForm from './components/BlogForm';
@@ -18,9 +18,11 @@ const App = () => {
     if (prevSession) {
       const oldUser = JSON.parse(prevSession);
       setUser(oldUser);
-      setToken(oldUser.token);
     }
-    getAll().then((blogs) => setBlogs(blogs));
+    (async () => {
+      const allBlogs = await getAll();
+      updateBlogs(allBlogs);
+    })();
   }, []);
 
   useEffect(() => {
@@ -36,12 +38,15 @@ const App = () => {
     );
   };
 
+  const updateBlogs = (blogs) => {
+    setBlogs(blogs.toSorted((first, second) => second.likes - first.likes));
+  };
+
   const loginHandler = async ({ username, password }) => {
     try {
       const credentials = await login(username, password);
       setUser(credentials);
       window.localStorage.setItem('user', JSON.stringify(credentials));
-      setToken(credentials.token);
       setUsername('');
       setPassword('');
     } catch (error) {
@@ -52,7 +57,6 @@ const App = () => {
   const logout = () => {
     window.localStorage.clear();
     setUser(undefined);
-    setToken(undefined);
   };
 
   const warningStyle = {
@@ -86,14 +90,21 @@ const App = () => {
           <h2>blogs</h2>
           {feedbackMessage && <p style={feedbackStyle}>{feedbackMessage}</p>}
           {user.name} logged in<button onClick={logout}>logout</button>
+          <br></br>
           <BlogForm
-            createBlog={createBlog}
+            user={user}
             currentBlogs={blogs}
-            setBlogs={setBlogs}
+            setBlogs={updateBlogs}
             giveFeedback={giveFeedback}
           />
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog
+              key={blog.id}
+              user={user}
+              blog={blog}
+              blogs={blogs}
+              setBlogs={updateBlogs}
+            />
           ))}
         </>
       )}
