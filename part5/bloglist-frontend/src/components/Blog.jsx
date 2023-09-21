@@ -1,7 +1,7 @@
 import useToggle from '../hooks/useToggle';
 import PropTypes from 'prop-types';
 
-const Blog = ({ blog, handleLike, handleDelete }) => {
+const Blog = ({ blog, user, handleLike, handleDelete }) => {
   const [show, flip] = useToggle();
 
   const listStyle = {
@@ -15,6 +15,9 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
   };
 
   const buttonStyle = {
+    display: `${
+      blog.user && blog.user.username === user.username ? 'flex' : 'none'
+    }`,
     width: 'min-content',
   };
 
@@ -35,7 +38,11 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
           </button>
         </div>
         {blog.user && <p data-testid='name'>{blog.user.name}</p>}
-        <button style={buttonStyle} onClick={() => handleDelete(blog)}>
+        <button
+          id='remove'
+          style={buttonStyle}
+          onClick={() => handleDelete(blog)}
+        >
           remove
         </button>
       </div>

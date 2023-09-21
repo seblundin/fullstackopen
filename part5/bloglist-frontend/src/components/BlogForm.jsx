@@ -35,6 +35,7 @@ const BlogForm = ({ submitBlog }) => {
         <h2>create new</h2>
         title:
         <input
+          id='title'
           data-testid='title-input'
           type='text'
           value={title}
@@ -43,6 +44,7 @@ const BlogForm = ({ submitBlog }) => {
         />
         author:
         <input
+          id='author'
           data-testid='author-input'
           type='text'
           value={author}
@@ -51,17 +53,20 @@ const BlogForm = ({ submitBlog }) => {
         />
         url:
         <input
+          id='url'
           data-testid='url-input'
           type='text'
           value={url}
           name='Url'
           onChange={({ target }) => setUrl(target.value)}
         />
-        <button data-testid='submit-button' type='submit'>
+        <button id='submit-blog' data-testid='submit-button' type='submit'>
           create
         </button>
       </form>
-      <button onClick={toggle}>{show ? 'cancel' : 'new blog'}</button>
+      <button id='new-button' onClick={toggle}>
+        {show ? 'cancel' : 'new blog'}
+      </button>
     </>
   );
 };
