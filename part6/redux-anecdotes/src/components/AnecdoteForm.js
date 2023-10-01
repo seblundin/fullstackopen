@@ -1,12 +1,15 @@
 import { useDispatch } from "react-redux";
-import { createAction } from "../reducers/anecdoteReducer";
+import { create } from "../reducers/anecdoteReducer";
+import { update } from "../reducers/notificationReducer";
 
 const CreateAnecdotes = () => {
   const dispatch = useDispatch();
 
   const createNote = (event) => {
     event.preventDefault();
-    dispatch(createAction(event.target.anecdote.value));
+    const anecdote = event.target.anecdote.value;
+    dispatch(create(anecdote));
+    dispatch(update(`You created '${anecdote}'`));
   };
 
   return (
