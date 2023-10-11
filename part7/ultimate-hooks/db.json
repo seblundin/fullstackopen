@@ -1,0 +1,15 @@
+{
+  "notes": [
+    {
+      "id": "1234",
+      "content": "Hello"
+    }
+  ],
+  "persons": [
+    {
+      "id": "123",
+      "name": "jannu",
+      "number": "1234"
+    }
+  ]
+}
